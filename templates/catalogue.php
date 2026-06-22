@@ -1,16 +1,22 @@
 <section class="hero">
-    <p class="eyebrow">Colección independiente</p>
-    <h1>Juegos para tu próxima aventura</h1>
-    <p>Un catálogo ficticio construido para demostrar PHP, consultas seguras y transacciones reales.</p>
-</section>
-
-<form class="search" action="<?= e(url('catalogo')) ?>" method="get" role="search">
-    <label for="q">Buscar por nombre o EAN-13</label>
-    <div class="search-row">
-        <input id="q" name="q" type="search" value="<?= e($query) ?>" placeholder="Ej. Neon Apex" maxlength="120">
-        <button type="submit">Buscar</button>
+    <div class="hero-orb" aria-hidden="true">
+        <span class="hero-orb__core">X</span>
+        <i></i><i></i><i></i>
     </div>
-</form>
+    <div class="hero-console">
+        <p class="eyebrow">System / game library</p>
+        <h1>Xbox<br>Shop</h1>
+        <p>Catálogo de juegos ficticios ejecutado con PHP, PDO y MariaDB.</p>
+        <form class="search" action="<?= e(url('catalogo')) ?>" method="get" role="search">
+            <label for="q"><span aria-hidden="true">›</span> Buscar por nombre o EAN-13</label>
+            <div class="search-row">
+                <input id="q" name="q" type="search" value="<?= e($query) ?>" placeholder="NEON APEX_" maxlength="120">
+                <button type="submit">Ejecutar</button>
+            </div>
+        </form>
+        <p class="system-status"><span></span> SYSTEM ONLINE · DATABASE CONNECTED</p>
+    </div>
+</section>
 
 <div class="section-heading">
     <h2><?= $query !== '' ? 'Resultados' : 'Catálogo' ?></h2>

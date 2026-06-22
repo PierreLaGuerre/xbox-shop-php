@@ -17,10 +17,11 @@ use App\Support\Flash;
 </head>
 <body>
 <a class="skip-link" href="#contenido">Saltar al contenido</a>
+<div class="screen-noise" aria-hidden="true"></div>
 <header class="site-header">
     <a class="brand" href="<?= e(url('catalogo')) ?>" aria-label="Xbox Shop, inicio">
         <span class="brand-mark" aria-hidden="true">X</span>
-        <span>Xbox Shop</span>
+        <span>XBOX<span class="brand-slash">//</span>SHOP</span>
     </a>
     <nav aria-label="Navegación principal">
         <a href="<?= e(url('catalogo')) ?>">Catálogo</a>
@@ -50,7 +51,7 @@ use App\Support\Flash;
 </main>
 
 <footer class="site-footer">
-    <p>Proyecto educativo de portfolio · PHP 8 · PDO · MariaDB</p>
+    <p>PORTFOLIO_BUILD 2026 · PHP 8 · PDO · MARIADB</p>
     <p>Fan project no oficial, sin afiliación con Microsoft o Xbox.</p>
 </footer>
 </body>
