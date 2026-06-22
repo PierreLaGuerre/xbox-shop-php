@@ -31,8 +31,8 @@ final class PurchaseServiceTest extends TestCase
         $id = (int) $this->db->query("SELECT id FROM producto WHERE ean13='5901234123457'")->fetchColumn();
         $saleId = $this->service->purchase($id, 2);
         self::assertGreaterThan(0, $saleId);
-        self::assertSame('28', $this->db->query("SELECT stock FROM producto WHERE id={$id}")->fetchColumn());
-        self::assertSame('2', $this->db->query("SELECT cantidad FROM detalle_venta WHERE venta_id={$saleId}")->fetchColumn());
+        self::assertSame(28, (int) $this->db->query("SELECT stock FROM producto WHERE id={$id}")->fetchColumn());
+        self::assertSame(2, (int) $this->db->query("SELECT cantidad FROM detalle_venta WHERE venta_id={$saleId}")->fetchColumn());
     }
 
     public function testInsufficientStockRollsBack(): void
@@ -40,13 +40,13 @@ final class PurchaseServiceTest extends TestCase
         $id = (int) $this->db->query("SELECT id FROM producto WHERE ean13='4006381333931'")->fetchColumn();
         try { $this->service->purchase($id, 10); $this->service->purchase($id, 10); }
         catch (DomainException $exception) { self::assertSame('No hay suficiente stock disponible.', $exception->getMessage()); }
-        self::assertSame('1', $this->db->query('SELECT COUNT(*) FROM venta')->fetchColumn());
+        self::assertSame(1, (int) $this->db->query('SELECT COUNT(*) FROM venta')->fetchColumn());
     }
 
     public function testUnknownProductRollsBack(): void
     {
         $this->expectException(DomainException::class);
         try { $this->service->purchase(999999, 1); }
-        finally { self::assertSame('0', $this->db->query('SELECT COUNT(*) FROM venta')->fetchColumn()); }
+        finally { self::assertSame(0, (int) $this->db->query('SELECT COUNT(*) FROM venta')->fetchColumn()); }
     }
 }
