@@ -4,6 +4,8 @@ Fictional video game shop built as a portfolio project after finishing DAW. The 
 
 > **Unofficial educational fan project.** This project is not affiliated with, endorsed by, or sponsored by Microsoft or Xbox. All catalogue products and names are fictional.
 
+[Live demo](https://pierrelaguerre.alwaysdata.net/catalogo)
+
 ![Xbox Shop catalogue](docs/screenshots/catalogue.png)
 
 ## What it demonstrates
