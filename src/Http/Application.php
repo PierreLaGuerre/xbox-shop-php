@@ -41,7 +41,7 @@ final class Application
                 ['GET', ''], ['GET', 'catalogo'] => $this->catalogue(),
                 ['GET', 'producto'] => $this->product(),
                 ['POST', 'comprar'] => $this->purchase(),
-                ['GET', 'admin/login'] => View::render('admin/login', ['title' => 'Acceso de administración']),
+                ['GET', 'admin/login'] => View::render('admin/login', ['title' => 'Admin access']),
                 ['POST', 'admin/login'] => $this->login(),
                 ['POST', 'admin/logout'] => $this->logout(),
                 ['GET', 'admin'] => $this->admin(),
@@ -56,17 +56,17 @@ final class Application
             };
         } catch (PDOException $exception) {
             error_log($exception->getMessage());
-            $this->serverError('No ha sido posible conectar con la tienda. Inténtalo de nuevo más tarde.');
+            $this->serverError('The shop could not connect to the database. Please try again later.');
         } catch (Throwable $exception) {
             error_log($exception->getMessage());
-            $this->serverError(Env::bool('APP_DEBUG') ? $exception->getMessage() : 'Ha ocurrido un error inesperado.');
+            $this->serverError(Env::bool('APP_DEBUG') ? $exception->getMessage() : 'An unexpected error occurred.');
         }
     }
 
     private function catalogue(): void
     {
         $query = trim((string) ($_GET['q'] ?? ''));
-        View::render('catalogue', ['title' => 'Catálogo', 'products' => $this->products->search($query), 'query' => $query]);
+        View::render('catalogue', ['title' => 'Catalogue', 'products' => $this->products->search($query), 'query' => $query]);
     }
 
     private function product(): void
@@ -82,14 +82,14 @@ final class Application
         $id = filter_input(INPUT_POST, 'producto_id', FILTER_VALIDATE_INT);
         $quantity = filter_input(INPUT_POST, 'cantidad', FILTER_VALIDATE_INT);
         if (!$id || !$quantity) {
-            Flash::set('error', 'Selecciona un producto y una cantidad válida.');
+            Flash::set('error', 'Select a product and a valid quantity.');
             redirect('catalogo');
         }
         try {
             $this->enforcePurchaseLimit();
             $saleId = (new PurchaseService(Connection::get(), $this->products))->purchase($id, $quantity);
             $_SESSION['purchases'][] = time();
-            Flash::set('success', "Compra de demostración #{$saleId} realizada correctamente.");
+            Flash::set('success', "Demo purchase #{$saleId} completed successfully.");
         } catch (\DomainException $exception) {
             Flash::set('error', $exception->getMessage());
         }
@@ -100,10 +100,10 @@ final class Application
     {
         $this->requireCsrf();
         if ($this->auth->attempt((string) ($_POST['usuario'] ?? ''), (string) ($_POST['password'] ?? ''))) {
-            Flash::set('success', 'Sesión iniciada.');
+            Flash::set('success', 'Session started.');
             redirect('admin');
         }
-        Flash::set('error', 'Usuario o contraseña incorrectos.');
+        Flash::set('error', 'Invalid username or password.');
         redirect('admin/login');
     }
 
@@ -111,14 +111,14 @@ final class Application
     {
         $this->requireCsrf();
         AuthService::logout();
-        Flash::set('success', 'Sesión cerrada.');
+        Flash::set('success', 'Session closed.');
         redirect('catalogo');
     }
 
     private function admin(): void
     {
         $this->requireAdmin();
-        View::render('admin/index', ['title' => 'Administración', 'products' => $this->products->search('', true)]);
+        View::render('admin/index', ['title' => 'Admin', 'products' => $this->products->search('', true)]);
     }
 
     private function productForm(int $id = 0): void
@@ -126,7 +126,7 @@ final class Application
         $this->requireAdmin();
         $product = $id ? $this->products->find($id) : null;
         if ($id && !$product) { $this->notFound(); return; }
-        View::render('admin/product-form', ['title' => $id ? 'Editar producto' : 'Nuevo producto', 'product' => $product, 'errors' => [], 'old' => $product ?? []]);
+        View::render('admin/product-form', ['title' => $id ? 'Edit product' : 'New product', 'product' => $product, 'errors' => [], 'old' => $product ?? []]);
     }
 
     private function saveProduct(int $id = 0): void
@@ -135,14 +135,14 @@ final class Application
         $this->requireCsrf();
         $errors = ProductValidator::validate($_POST);
         $existing = $this->products->findByEan(trim((string) ($_POST['ean13'] ?? '')));
-        if ($existing && (int) $existing['id'] !== $id) $errors['ean13'] = 'Ese EAN-13 ya pertenece a otro producto.';
+        if ($existing && (int) $existing['id'] !== $id) $errors['ean13'] = 'That EAN-13 already belongs to another product.';
         if ($errors) {
             http_response_code(422);
-            View::render('admin/product-form', ['title' => $id ? 'Editar producto' : 'Nuevo producto', 'product' => $id ? $this->products->find($id) : null, 'errors' => $errors, 'old' => $_POST]);
+            View::render('admin/product-form', ['title' => $id ? 'Edit product' : 'New product', 'product' => $id ? $this->products->find($id) : null, 'errors' => $errors, 'old' => $_POST]);
             return;
         }
         $id ? $this->products->update($id, $_POST) : $this->products->create($_POST);
-        Flash::set('success', $id ? 'Producto actualizado.' : 'Producto creado.');
+        Flash::set('success', $id ? 'Product updated.' : 'Product created.');
         redirect('admin');
     }
 
@@ -152,9 +152,9 @@ final class Application
         $this->requireCsrf();
         try {
             $deleted = $this->products->delete((int) ($_POST['id'] ?? 0));
-            Flash::set($deleted ? 'success' : 'error', $deleted ? 'Producto eliminado.' : 'El producto no existe.');
+            Flash::set($deleted ? 'success' : 'error', $deleted ? 'Product deleted.' : 'Product does not exist.');
         } catch (PDOException) {
-            Flash::set('error', 'No se puede eliminar un producto que ya tiene ventas. Déjalo sin stock.');
+            Flash::set('error', 'Products with existing sales cannot be deleted. Set stock to zero instead.');
         }
         redirect('admin');
     }
@@ -167,19 +167,19 @@ final class Application
     private function apiEan(): void
     {
         $ean = trim((string) ($_GET['ean13'] ?? ''));
-        if (!Ean13Validator::isValid($ean)) { $this->json(['error' => 'EAN-13 no válido.'], 422); return; }
+        if (!Ean13Validator::isValid($ean)) { $this->json(['error' => 'Invalid EAN-13.'], 422); return; }
         $product = $this->products->findByEan($ean);
-        $this->json($product ?: ['error' => 'Producto no encontrado.'], $product ? 200 : 404);
+        $this->json($product ?: ['error' => 'Product not found.'], $product ? 200 : 404);
     }
 
     private function requireAdmin(): void
     {
-        if (!AuthService::check()) { Flash::set('error', 'Inicia sesión para continuar.'); redirect('admin/login'); }
+        if (!AuthService::check()) { Flash::set('error', 'Log in to continue.'); redirect('admin/login'); }
     }
 
     private function requireCsrf(): void
     {
-        if (!Csrf::verify($_POST['_csrf'] ?? null)) { http_response_code(419); View::render('error', ['title' => 'Sesión caducada', 'message' => 'Actualiza la página e inténtalo de nuevo.']); exit; }
+        if (!Csrf::verify($_POST['_csrf'] ?? null)) { http_response_code(419); View::render('error', ['title' => 'Session expired', 'message' => 'Refresh the page and try again.']); exit; }
     }
 
     private function enforcePurchaseLimit(): void
@@ -187,7 +187,7 @@ final class Application
         if (!Env::bool('DEMO_MODE', true)) return;
         $window = time() - 3600;
         $_SESSION['purchases'] = array_values(array_filter($_SESSION['purchases'] ?? [], fn ($time) => $time >= $window));
-        if (count($_SESSION['purchases']) >= Env::int('DEMO_PURCHASE_LIMIT', 5)) throw new \DomainException('Has alcanzado el límite de compras de demostración por hora.');
+        if (count($_SESSION['purchases']) >= Env::int('DEMO_PURCHASE_LIMIT', 5)) throw new \DomainException('You have reached the hourly demo purchase limit.');
     }
 
     private function json(array $data, int $status = 200): void
@@ -200,12 +200,12 @@ final class Application
     private function notFound(): void
     {
         http_response_code(404);
-        View::render('error', ['title' => 'Página no encontrada', 'message' => 'La página que buscas no existe.']);
+        View::render('error', ['title' => 'Page not found', 'message' => 'The page you are looking for does not exist.']);
     }
 
     private function serverError(string $message): void
     {
         http_response_code(500);
-        View::render('error', ['title' => 'Algo ha fallado', 'message' => $message]);
+        View::render('error', ['title' => 'Something went wrong', 'message' => $message]);
     }
 }

@@ -14,13 +14,13 @@ final class PurchaseService
 
     public function purchase(int $productId, int $quantity): int
     {
-        if ($quantity < 1 || $quantity > 10) throw new \DomainException('La cantidad debe estar entre 1 y 10.');
+        if ($quantity < 1 || $quantity > 10) throw new \DomainException('Quantity must be between 1 and 10.');
 
         $this->db->beginTransaction();
         try {
             $product = $this->products->find($productId, true);
-            if ($product === null) throw new \DomainException('El producto no existe.');
-            if ((int) $product['stock'] < $quantity) throw new \DomainException('No hay suficiente stock disponible.');
+            if ($product === null) throw new \DomainException('Product does not exist.');
+            if ((int) $product['stock'] < $quantity) throw new \DomainException('Not enough stock available.');
 
             $stock = (int) $product['stock'] - $quantity;
             $statement = $this->db->prepare('UPDATE producto SET stock = :stock WHERE id = :id');

@@ -1,6 +1,6 @@
 {
   "name": "pierrelaguerre/xbox-shop-php",
-  "description": "Tienda educativa construida con PHP 8, PDO y MariaDB.",
+  "description": "Educational shop built with PHP 8, PDO and MariaDB.",
   "type": "project",
   "license": "MIT",
   "require": {
@@ -19,7 +19,7 @@
     "files": ["src/Support/helpers.php"]
   },
   "scripts": {
-    "test": "phpunit",
+    "test": "php vendor/bin/phpunit",
     "lint": "@php bin/lint.php"
   }
 }

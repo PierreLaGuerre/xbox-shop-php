@@ -1,121 +1,121 @@
 # Xbox Shop · PHP + MariaDB
 
-Tienda de videojuegos ficticia creada como proyecto de portfolio tras finalizar DAW. El objetivo no es simular un e-commerce real, sino enseñar de forma clara fundamentos de **PHP 8**, **PDO**, **MariaDB**, seguridad web y frontend responsive sin frameworks.
+Fictional video game shop built as a portfolio project after finishing DAW. The goal is not to mimic a real e-commerce platform, but to clearly show **PHP 8**, **PDO**, **MariaDB**, web security basics and responsive frontend work without frameworks.
 
-> **Fan project educativo no oficial.** No está afiliado, respaldado ni patrocinado por Microsoft o Xbox. Los productos y nombres del catálogo son ficticios.
+> **Unofficial educational fan project.** This project is not affiliated with, endorsed by, or sponsored by Microsoft or Xbox. All catalogue products and names are fictional.
 
-![Catálogo de Xbox Shop](docs/screenshots/catalogue.png)
+![Xbox Shop catalogue](docs/screenshots/catalogue.png)
 
-## Qué demuestra
+## What it demonstrates
 
-- Catálogo responsive con búsqueda por nombre o EAN-13.
-- Compra de demostración con bloqueo de fila, actualización de stock y registro de venta en una transacción.
-- CRUD de productos protegido por autenticación con sesiones.
-- Consultas preparadas, validación servidor, escape HTML y tokens CSRF.
-- API JSON de catálogo y consulta por EAN-13.
-- Restauración programable de los datos de demostración.
-- Pruebas unitarias e integración contra MariaDB mediante GitHub Actions.
+- Responsive catalogue with search by name or EAN-13.
+- Demo purchase flow with row locking, stock updates and sale records inside a transaction.
+- Product CRUD protected by session-based authentication.
+- Prepared statements, server-side validation, escaped output and CSRF tokens.
+- JSON catalogue API and EAN-13 lookup.
+- Scheduled reset for demo data.
+- Unit and MariaDB integration tests running in GitHub Actions.
 
-## Arquitectura
+## Architecture
 
 ```text
-public/       Front controller y recursos web
-src/          Configuración, HTTP, repositorios, servicios y validadores
-templates/    Vistas PHP y layout común
-database/     Esquema y datos ficticios reproducibles
-bin/          Creación de administrador, lint y restauración de demo
-tests/        Pruebas unitarias y de integración
+public/       Front controller and public web assets
+src/          Configuration, HTTP layer, repositories, services and validators
+templates/    PHP views and shared layout
+database/     Reproducible schema and fictional seed data
+bin/          Admin creation, linting and demo reset scripts
+tests/        Unit and integration tests
 ```
 
-El flujo principal es `Application → Service → Repository → PDO`. Se ha mantenido intencionadamente pequeño para que cada decisión resulte fácil de explicar y probar.
+The main flow is `Application → Service → Repository → PDO`. It is intentionally small so every decision is easy to explain, inspect and test.
 
-## Instalación local con XAMPP/phpMyAdmin
+## Local installation with XAMPP/phpMyAdmin
 
-Requisitos: PHP 8.2 o posterior, Composer, MariaDB/MySQL y las extensiones `pdo_mysql` y `mbstring`.
+Requirements: PHP 8.2 or newer, Composer, MariaDB/MySQL and the `pdo_mysql` and `mbstring` extensions.
 
-1. Clona el repositorio dentro de `htdocs` y entra en la carpeta.
-2. Instala dependencias:
+1. Clone the repository inside `htdocs` and enter the project folder.
+2. Install dependencies:
 
    ```bash
    composer install
    ```
 
-3. Copia `.env.example` como `.env` y configura la URL y las credenciales locales. La contraseña de ejemplo no debe reutilizarse.
-4. En phpMyAdmin crea una base `xbox_shop` con cotejamiento `utf8mb4_unicode_ci` e importa, en este orden, `database/schema.sql` y `database/seed.sql`. En XAMPP también puedes automatizar este paso con `php bin/setup-local.php`; usa `ROOT_DB_USER`/`ROOT_DB_PASS` si tu cuenta raíz no tiene la configuración predeterminada.
-6. Para habilitar la administración, añade temporalmente una contraseña de 12 caracteres o más a `.env`:
+3. Copy `.env.example` to `.env` and configure the local URL and database credentials. Do not reuse the example password.
+4. In phpMyAdmin, create a database named `xbox_shop` with `utf8mb4_unicode_ci` collation and import, in this order, `database/schema.sql` and `database/seed.sql`. With XAMPP you can also automate this step with `php bin/setup-local.php`; use `ROOT_DB_USER`/`ROOT_DB_PASS` if your root account does not use the default setup.
+5. To enable the admin area, temporarily add a password of at least 12 characters to `.env`:
 
    ```dotenv
-   ADMIN_PASSWORD=una-clave-local-segura
+   ADMIN_PASSWORD=a-secure-local-password
    ```
 
-   Después ejecuta `php bin/create-admin.php admin` y elimina esa línea de `.env`.
-7. Abre `http://localhost/xbox-shop/public/`.
+   Then run `php bin/create-admin.php admin` and remove that line from `.env`.
+6. Open `http://localhost/xbox-shop/public/`.
 
-Apache debe tener `mod_rewrite` habilitado. Como alternativa de desarrollo puede usarse:
+Apache needs `mod_rewrite` enabled. For development, you can also run:
 
 ```bash
 php -S 127.0.0.1:8080 -t public public/router.php
 ```
 
-y establecer `APP_URL=http://127.0.0.1:8080`.
+and set `APP_URL=http://127.0.0.1:8080`.
 
-## Variables de entorno
+## Environment variables
 
-| Variable | Uso |
+| Variable | Purpose |
 |---|---|
-| `APP_URL` | URL pública sin barra final |
-| `APP_DEBUG` | Muestra detalles de error únicamente en local |
-| `SESSION_SECURE` | Debe ser `true` bajo HTTPS |
-| `DEMO_MODE` | Activa límites y permite restaurar la demo |
-| `DEMO_PURCHASE_LIMIT` | Compras máximas por sesión y hora |
-| `DB_*` | Conexión privada a MariaDB/MySQL |
+| `APP_URL` | Public URL without trailing slash |
+| `APP_DEBUG` | Shows detailed errors only in local development |
+| `SESSION_SECURE` | Must be `true` under HTTPS |
+| `DEMO_MODE` | Enables purchase limits and allows demo reset |
+| `DEMO_PURCHASE_LIMIT` | Maximum purchases per session and hour |
+| `DB_*` | Private MariaDB/MySQL connection settings |
 
-`.env` y `vendor/` están excluidos de Git. El repositorio solo contiene `.env.example`, el esquema y datos ficticios.
+`.env` and `vendor/` are excluded from Git. The repository only contains `.env.example`, the schema and fictional seed data.
 
 ## API
 
-- `GET /api/productos`: catálogo con stock; acepta `?q=texto`.
-- `GET /api/productos/ean?ean13=5901234123457`: un producto o error JSON con estado `404`/`422`.
+- `GET /api/productos`: catalogue with stock; accepts `?q=text`.
+- `GET /api/productos/ean?ean13=5901234123457`: one product or a JSON error with `404`/`422` status.
 
-## Calidad
+## Quality
 
 ```bash
 composer lint
 composer test
 ```
 
-Las pruebas de integración se omiten localmente si no existen variables `TEST_DB_*`. En CI se crea una MariaDB desechable y se cubren compra correcta, stock insuficiente, producto inexistente y rollback.
+Integration tests are skipped locally unless `TEST_DB_*` variables exist. In CI, GitHub Actions creates a disposable MariaDB service and covers successful purchases, insufficient stock, missing products and rollback behaviour.
 
-Antes de publicar una versión se revisan también catálogo, búsqueda, compra, login/logout, CRUD, API, viewport móvil, teclado, contraste y Lighthouse.
+Before publishing a release, the manual checklist also covers catalogue browsing, search, purchase flow, login/logout, CRUD, API responses, mobile viewport, keyboard navigation, contrast and Lighthouse.
 
-## Despliegue gratuito en Alwaysdata
+## Free deployment on Alwaysdata
 
-1. Crea una cuenta Free, una base MariaDB y un usuario de base de datos.
-2. Clona el repositorio por SSH y ejecuta `composer install --no-dev --optimize-autoloader`.
-3. Importa `database/schema.sql` y `database/seed.sql` desde el panel o la consola.
-4. Crea `.env` en la raíz privada con las credenciales de Alwaysdata. Usa `SESSION_SECURE=true`, `APP_DEBUG=false` y la URL `https://usuario.alwaysdata.net`.
-5. Configura el sitio como PHP y apunta su raíz a la carpeta `public/`.
-6. Crea el administrador con `bin/create-admin.php` y retira `ADMIN_PASSWORD`.
-7. Programa una tarea diaria `php /ruta/al/proyecto/bin/reset-demo.php`.
-8. Verifica HTTPS, compra, login y API antes de enlazar la demo.
+1. Create a Free account, a MariaDB database and a database user.
+2. Clone the repository through SSH and run `composer install --no-dev --optimize-autoloader`.
+3. Import `database/schema.sql` and `database/seed.sql` from the panel or console.
+4. Create `.env` in the private project root with the Alwaysdata credentials. Use `SESSION_SECURE=true`, `APP_DEBUG=false` and the URL `https://username.alwaysdata.net`.
+5. Configure the site as PHP and point its document root to `public/`.
+6. Create the administrator with `bin/create-admin.php` and remove `ADMIN_PASSWORD`.
+7. Schedule a daily task: `php /path/to/project/bin/reset-demo.php`.
+8. Verify HTTPS, purchase flow, login and API before linking the demo.
 
-La documentación oficial de referencia está en [planes](https://www.alwaysdata.com/en/pricing/), [PHP](https://help.alwaysdata.com/en/web-hosting/languages/php/) y [MariaDB](https://help.alwaysdata.com/en/web-hosting/databases/mariadb/).
+Reference documentation: [plans](https://www.alwaysdata.com/en/pricing/), [PHP](https://help.alwaysdata.com/en/web-hosting/languages/php/) and [MariaDB](https://help.alwaysdata.com/en/web-hosting/databases/mariadb/).
 
-## Presentación en GitHub
+## GitHub presentation
 
-Al publicar, configura la descripción como: `Tienda educativa con PHP 8, PDO, MariaDB y frontend responsive.` Añade la URL de la demo y los topics `php`, `mysql`, `pdo`, `html`, `css`, `javascript` y `portfolio`.
+When publishing, use this repository description: `Educational PHP 8, PDO, MariaDB and responsive frontend shop.` Add the demo URL and the topics `php`, `mysql`, `pdo`, `html`, `css`, `javascript` and `portfolio`.
 
-Incluye capturas de catálogo móvil/escritorio y del panel sin credenciales. Después selecciona el repositorio desde **Customize your pins** en el perfil de GitHub.
+Include screenshots of the desktop/mobile catalogue and the admin panel without credentials. Then pin the repository from **Customize your pins** on your GitHub profile.
 
-## Decisiones y aprendizajes
+## Decisions and learnings
 
-- PDO y sentencias preparadas separan los datos de las consultas.
-- `SELECT … FOR UPDATE` evita que dos compras consuman simultáneamente el mismo stock.
-- El patrón POST/Redirect/GET impide reenvíos accidentales al recargar.
-- El EAN se trata como texto para conservar ceros iniciales.
-- El administrador se crea fuera de los SQL versionados; ninguna clave llega al repositorio.
-- El frontend utiliza HTML, CSS y JavaScript nativos para hacer visibles los fundamentos.
+- PDO and prepared statements keep data separate from SQL queries.
+- `SELECT … FOR UPDATE` prevents two purchases from consuming the same stock at the same time.
+- The POST/Redirect/GET pattern prevents accidental duplicate submissions on refresh.
+- EAN codes are handled as text so leading zeroes are preserved.
+- The administrator is created outside the versioned SQL files; no password reaches the repository.
+- The frontend uses native HTML, CSS and JavaScript to keep the fundamentals visible.
 
-## Licencia
+## License
 
-Código publicado bajo [MIT](LICENSE). La licencia no concede derechos sobre marcas de terceros.
+Code released under [MIT](LICENSE). This license does not grant any rights over third-party trademarks.

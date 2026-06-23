@@ -1,14 +1,14 @@
-# Checklist de publicación
+# Release checklist
 
-- [ ] Rotar la contraseña antigua de la base local y comprobar que no aparece en el historial Git.
-- [ ] Importar `schema.sql` y `seed.sql` en una base limpia.
-- [ ] Ejecutar `composer lint` y `composer test`.
-- [ ] Probar catálogo, búsqueda, compra, login, logout y CRUD.
-- [ ] Probar `/api/productos` y búsqueda EAN con respuestas 200, 404 y 422.
-- [ ] Revisar móvil (360 px), escritorio, teclado y reducción de movimiento.
-- [ ] Ejecutar Lighthouse y corregir errores importantes de accesibilidad.
-- [ ] Crear capturas sin credenciales ni información privada.
-- [ ] Desplegar con `APP_DEBUG=false` y `SESSION_SECURE=true`.
-- [ ] Configurar restauración diaria y probarla manualmente.
-- [ ] Añadir descripción, URL y topics al repositorio.
-- [ ] Fijar el repositorio desde “Customize your pins”.
+- [ ] Rotate the old local database password and check that it does not appear in Git history.
+- [ ] Import `schema.sql` and `seed.sql` into a clean database.
+- [ ] Run `composer lint` and `composer test`.
+- [ ] Test catalogue, search, purchase flow, login, logout and CRUD.
+- [ ] Test `/api/productos` and EAN search with 200, 404 and 422 responses.
+- [ ] Review mobile layout at 360 px, desktop layout, keyboard navigation and reduced motion.
+- [ ] Run Lighthouse and fix important accessibility issues.
+- [ ] Create screenshots without credentials or private information.
+- [ ] Deploy with `APP_DEBUG=false` and `SESSION_SECURE=true`.
+- [ ] Configure the daily reset and test it manually.
+- [ ] Add repository description, demo URL and topics.
+- [ ] Pin the repository from “Customize your pins”.

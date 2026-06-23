@@ -12,7 +12,7 @@ final class ProductValidatorTest extends TestCase
     public function testAcceptsACompleteProduct(): void
     {
         self::assertSame([], ProductValidator::validate([
-            'nombre' => 'Signal Lost', 'descripcion' => 'Aventura narrativa.',
+            'nombre' => 'Signal Lost', 'descripcion' => 'Narrative adventure.',
             'precio' => '19.95', 'stock' => '8', 'ean13' => '5901234123457', 'imagen' => '',
         ]));
     }

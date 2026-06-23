@@ -10,7 +10,7 @@ $database = Env::get('DB_NAME');
 $username = Env::get('DB_USER');
 $password = Env::get('DB_PASS');
 if (!preg_match('/^[a-zA-Z0-9_]+$/', $database) || !preg_match('/^[a-zA-Z0-9_]+$/', $username)) {
-    fwrite(STDERR, "DB_NAME y DB_USER solo pueden contener letras, números y guion bajo.\n");
+    fwrite(STDERR, "DB_NAME and DB_USER may only contain letters, numbers and underscores.\n");
     exit(1);
 }
 
@@ -34,8 +34,8 @@ try {
     );
     $db->exec((string) file_get_contents(dirname(__DIR__) . '/database/schema.sql'));
     $db->exec((string) file_get_contents(dirname(__DIR__) . '/database/seed.sql'));
-    fwrite(STDOUT, "Base local preparada con " . $db->query('SELECT COUNT(*) FROM producto')->fetchColumn() . " productos.\n");
+    fwrite(STDOUT, "Local database prepared with " . $db->query('SELECT COUNT(*) FROM producto')->fetchColumn() . " products.\n");
 } catch (Throwable $exception) {
-    fwrite(STDERR, "No se pudo preparar la base local: {$exception->getMessage()}\n");
+    fwrite(STDERR, "Could not prepare the local database: {$exception->getMessage()}\n");
     exit(1);
 }

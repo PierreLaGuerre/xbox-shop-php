@@ -17,7 +17,7 @@ final class PurchaseServiceTest extends TestCase
 
     protected function setUp(): void
     {
-        if (getenv('TEST_DB_HOST') === false) self::markTestSkipped('MariaDB de integración no configurada.');
+        if (getenv('TEST_DB_HOST') === false) self::markTestSkipped('Integration MariaDB is not configured.');
         $dsn = sprintf('mysql:host=%s;port=%s;dbname=%s;charset=utf8mb4', getenv('TEST_DB_HOST'), getenv('TEST_DB_PORT') ?: '3306', getenv('TEST_DB_NAME'));
         $this->db = new PDO($dsn, (string) getenv('TEST_DB_USER'), (string) getenv('TEST_DB_PASS'), [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC]);
         $this->db->exec('SET FOREIGN_KEY_CHECKS=0; DROP TABLE IF EXISTS detalle_venta, venta, producto, administrador; SET FOREIGN_KEY_CHECKS=1');
@@ -39,7 +39,7 @@ final class PurchaseServiceTest extends TestCase
     {
         $id = (int) $this->db->query("SELECT id FROM producto WHERE ean13='4006381333931'")->fetchColumn();
         try { $this->service->purchase($id, 10); $this->service->purchase($id, 10); }
-        catch (DomainException $exception) { self::assertSame('No hay suficiente stock disponible.', $exception->getMessage()); }
+        catch (DomainException $exception) { self::assertSame('Not enough stock available.', $exception->getMessage()); }
         self::assertSame(1, (int) $this->db->query('SELECT COUNT(*) FROM venta')->fetchColumn());
     }
 

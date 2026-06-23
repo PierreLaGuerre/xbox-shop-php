@@ -1,6 +1,5 @@
 <section class="empty-state">
-    <p class="eyebrow">Error <?= http_response_code() ?></p>
-    <h1><?= e($title) ?></h1>
-    <p><?= e($message) ?></p>
-    <a class="button" href="<?= e(url('catalogo')) ?>">Volver al catálogo</a>
+    <h1><?= e($title ?? 'Error') ?></h1>
+    <p><?= e($message ?? 'Something went wrong.') ?></p>
+    <a class="button" href="<?= e(url('catalogo')) ?>">Back to catalogue</a>
 </section>

@@ -13,7 +13,7 @@
   --glow: 0 0 8px rgba(105, 255, 48, 0.65), 0 0 24px rgba(32, 220, 30, 0.22);
 }
 
-/* Reset y superficie CRT */
+/* Reset and CRT surface */
 * {
   box-sizing: border-box;
 }
@@ -71,7 +71,7 @@ a {
   text-underline-offset: 4px;
 }
 
-/* Botones y campos de formulario */
+/* Buttons and form fields */
 button,
 .button {
   display: inline-flex;
@@ -149,7 +149,7 @@ label {
   top: 1rem;
 }
 
-/* Cabecera y navegación principal */
+/* Header and main navigation */
 .site-header {
   min-height: 70px;
   display: flex;
@@ -259,7 +259,7 @@ label {
   color: var(--neon-hot);
 }
 
-/* Hero: núcleo orbital y terminal de búsqueda */
+/* Hero: orbital core and search terminal */
 .hero {
   min-height: 600px;
   display: grid;
@@ -395,7 +395,7 @@ label {
   animation: pulse 1.7s infinite;
 }
 
-/* Catálogo y tarjetas de producto */
+/* Catalogue and product cards */
 .section-heading {
   display: flex;
   justify-content: space-between;
@@ -561,7 +561,7 @@ label {
   text-transform: uppercase;
 }
 
-/* Detalle y compra */
+/* Detail and purchase */
 .product-detail {
   display: grid;
   grid-template-columns: minmax(280px, 0.85fr) 1.15fr;
@@ -606,7 +606,7 @@ label {
   color: #ff9c9f;
 }
 
-/* Formularios y panel de administración */
+/* Forms and admin panel */
 .auth-card,
 .form-page {
   max-width: 620px;
@@ -686,7 +686,7 @@ tr:last-child td {
   background: rgba(3, 14, 5, 0.7);
 }
 
-/* Pie y utilidades de accesibilidad */
+/* Footer and accessibility utilities */
 .button--secondary {
   background: #061008;
   color: var(--neon);
@@ -756,7 +756,7 @@ tr:last-child td {
   }
 }
 
-/* Móvil */
+/* Mobile */
 @media (max-width: 560px) {
   .site-header {
     align-items: center;

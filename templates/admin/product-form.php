@@ -1,14 +1,14 @@
 <?php use App\Support\Csrf; ?>
-<a class="back-link" href="<?= e(url('admin')) ?>">← Volver a productos</a>
+<a class="back-link" href="<?= e(url('admin')) ?>">← Back to products</a>
 <section class="form-page">
-    <p class="eyebrow">Área privada</p>
-    <h1><?= $product ? 'Editar producto' : 'Nuevo producto' ?></h1>
+    <p class="eyebrow">Private area</p>
+    <h1><?= $product ? 'Edit product' : 'New product' ?></h1>
     <form action="<?= e(url($product ? 'admin/productos/editar?id=' . $product['id'] : 'admin/productos/nuevo')) ?>" method="post" class="stack-form">
         <input type="hidden" name="_csrf" value="<?= e(Csrf::token()) ?>">
         <?php foreach ([
-            'nombre' => ['Nombre', 'text'], 'ean13' => ['EAN-13', 'text'],
-            'precio' => ['Precio (€)', 'number'], 'stock' => ['Stock', 'number'],
-            'imagen' => ['URL de imagen (opcional)', 'url']
+            'nombre' => ['Name', 'text'], 'ean13' => ['EAN-13', 'text'],
+            'precio' => ['Price (€)', 'number'], 'stock' => ['Stock', 'number'],
+            'imagen' => ['Image URL (optional)', 'url']
         ] as $name => [$label, $type]): ?>
             <div>
                 <label for="<?= e($name) ?>"><?= e($label) ?></label>
@@ -21,10 +21,10 @@
             </div>
         <?php endforeach; ?>
         <div>
-            <label for="descripcion">Descripción</label>
+            <label for="descripcion">Description</label>
             <textarea id="descripcion" name="descripcion" rows="5" required <?= isset($errors['descripcion']) ? 'aria-invalid="true" aria-describedby="error-descripcion"' : '' ?>><?= e($old['descripcion'] ?? '') ?></textarea>
             <?php if (isset($errors['descripcion'])): ?><p class="field-error" id="error-descripcion"><?= e($errors['descripcion']) ?></p><?php endif; ?>
         </div>
-        <button type="submit"><?= $product ? 'Guardar cambios' : 'Crear producto' ?></button>
+        <button type="submit"><?= $product ? 'Save changes' : 'Create product' ?></button>
     </form>
 </section>
